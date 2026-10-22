@@ -6,8 +6,8 @@ create table if not exists routes (
   id text primary key,                 -- e.g. 'DEL-BOM'
   origin_code text not null,
   destination_code text not null,
-  distance_km int not null,
-  traffic_weight numeric not null      -- basket weight, sums to 1
+  distance_km int,
+  traffic_weight numeric not null      -- basket weight from DGCA city-pair passengers, sums to 1
 );
 
 create table if not exists airlines (
@@ -19,7 +19,7 @@ create table if not exists airlines (
 create table if not exists data_sources (
   id text primary key,                 -- e.g. 'src-indigo'
   name text not null,
-  type text not null check (type in ('airline', 'ota')),
+  type text not null check (type in ('airline', 'ota', 'gds', 'feed')),
   configured boolean not null default false
 );
 
@@ -75,7 +75,9 @@ insert into data_sources values
   ('src-indigo','IndiGo — airline website','airline',true), ('src-airindia','Air India — airline website','airline',true),
   ('src-aix','Air India Express — airline website','airline',true), ('src-akasa','Akasa Air — airline website','airline',true),
   ('src-spicejet','SpiceJet — airline website','airline',true), ('src-ota-a','OTA source A (placeholder)','ota',false),
-  ('src-ota-b','OTA source B (placeholder)','ota',false)
+  ('src-ota-b','OTA source B (placeholder)','ota',false),
+  ('src-amadeus','Amadeus Flight Offers (Enterprise API)','gds',true),
+  ('src-feed','Permitted partner feed (CSV)','feed',true)
 on conflict do nothing;
 insert into airlines values
   ('6E','IndiGo','src-indigo'), ('AI','Air India','src-airindia'), ('IX','Air India Express','src-aix'),

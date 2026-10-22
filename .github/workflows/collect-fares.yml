@@ -1,0 +1,43 @@
+name: Collect fares
+
+on:
+  schedule:
+    - cron: "30 0 * * *" # 06:00 IST daily
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Probe only (print rows, write nothing)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AMADEUS_BASE_URL: ${{ secrets.AMADEUS_BASE_URL }}
+      AMADEUS_CLIENT_ID: ${{ secrets.AMADEUS_CLIENT_ID }}
+      AMADEUS_CLIENT_SECRET: ${{ secrets.AMADEUS_CLIENT_SECRET }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python -m unittest discover collector
+      - name: Collect
+        run: |
+          if [ -z "$AMADEUS_CLIENT_ID" ]; then
+            echo "::notice::No fare source credentials configured yet - skipping collection."
+            exit 0
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python collector/collect.py --source amadeus --dry-run --routes 1
+          else
+            python collector/collect.py --source amadeus
+          fi

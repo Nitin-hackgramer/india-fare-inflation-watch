@@ -1,0 +1,120 @@
+{
+  "source": "DGCA city-pair wise domestic traffic (via Vonter/india-aviation-traffic, ODbL 1.0)",
+  "period": {
+    "from": "2025-08",
+    "to": "2026-07"
+  },
+  "generatedOn": "2026-10-22",
+  "basketShareOfDomesticPax": 0.227,
+  "skippedUnmappedPairs": [],
+  "routes": [
+    {
+      "origin": "DEL",
+      "destination": "BOM",
+      "originCity": "Delhi",
+      "destinationCity": "Mumbai",
+      "passengers": 6778337,
+      "id": "DEL-BOM",
+      "trafficWeight": 0.1783
+    },
+    {
+      "origin": "DEL",
+      "destination": "BLR",
+      "originCity": "Delhi",
+      "destinationCity": "Bengaluru",
+      "passengers": 4877158,
+      "id": "DEL-BLR",
+      "trafficWeight": 0.1283
+    },
+    {
+      "origin": "BOM",
+      "destination": "BLR",
+      "originCity": "Mumbai",
+      "destinationCity": "Bengaluru",
+      "passengers": 4129165,
+      "id": "BOM-BLR",
+      "trafficWeight": 0.1086
+    },
+    {
+      "origin": "HYD",
+      "destination": "DEL",
+      "originCity": "Hyderabad",
+      "destinationCity": "Delhi",
+      "passengers": 3105466,
+      "id": "HYD-DEL",
+      "trafficWeight": 0.0817
+    },
+    {
+      "origin": "DEL",
+      "destination": "CCU",
+      "originCity": "Delhi",
+      "destinationCity": "Kolkata",
+      "passengers": 2912808,
+      "id": "DEL-CCU",
+      "trafficWeight": 0.0766
+    },
+    {
+      "origin": "DEL",
+      "destination": "PNQ",
+      "originCity": "Delhi",
+      "destinationCity": "Pune",
+      "passengers": 2864459,
+      "id": "DEL-PNQ",
+      "trafficWeight": 0.0753
+    },
+    {
+      "origin": "DEL",
+      "destination": "AMD",
+      "originCity": "Delhi",
+      "destinationCity": "Ahmedabad",
+      "passengers": 2373313,
+      "id": "DEL-AMD",
+      "trafficWeight": 0.0624
+    },
+    {
+      "origin": "BOM",
+      "destination": "MAA",
+      "originCity": "Mumbai",
+      "destinationCity": "Chennai",
+      "passengers": 2219067,
+      "id": "BOM-MAA",
+      "trafficWeight": 0.0584
+    },
+    {
+      "origin": "BOM",
+      "destination": "CCU",
+      "originCity": "Mumbai",
+      "destinationCity": "Kolkata",
+      "passengers": 2215829,
+      "id": "BOM-CCU",
+      "trafficWeight": 0.0583
+    },
+    {
+      "origin": "BOM",
+      "destination": "HYD",
+      "originCity": "Mumbai",
+      "destinationCity": "Hyderabad",
+      "passengers": 2192139,
+      "id": "BOM-HYD",
+      "trafficWeight": 0.0577
+    },
+    {
+      "origin": "MAA",
+      "destination": "DEL",
+      "originCity": "Chennai",
+      "destinationCity": "Delhi",
+      "passengers": 2184325,
+      "id": "MAA-DEL",
+      "trafficWeight": 0.0574
+    },
+    {
+      "origin": "BLR",
+      "destination": "HYD",
+      "originCity": "Bengaluru",
+      "destinationCity": "Hyderabad",
+      "passengers": 2169407,
+      "id": "BLR-HYD",
+      "trafficWeight": 0.0571
+    }
+  ]
+}
