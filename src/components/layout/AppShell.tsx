@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, Database, LayoutDashboard, LineChart, Menu, PanelLeftClose, PanelLeftOpen, Plane, Route as RouteIcon, Settings } from "lucide-react";
+import { BookOpen, Database, LayoutDashboard, LineChart, Menu, PanelLeftClose, PanelLeftOpen, Radar, Route as RouteIcon, Settings } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ export const NAV_ITEMS = [
   { to: "/", label: "Overview", icon: LayoutDashboard },
   { to: "/airfare-index", label: "Airfare Index", icon: LineChart },
   { to: "/route-explorer", label: "Route Explorer", icon: RouteIcon },
+  { to: "/shock-radar", label: "Shock Radar", icon: Radar },
   { to: "/data-sources", label: "Data Sources", icon: Database },
   { to: "/methodology", label: "Methodology", icon: BookOpen },
   { to: "/settings", label: "Settings", icon: Settings },
@@ -47,9 +48,7 @@ function SidebarNav({ collapsed, onNavigate }: { collapsed?: boolean; onNavigate
 function Brand({ collapsed }: { collapsed?: boolean }) {
   return (
     <div className={cn("flex h-14 items-center gap-2.5 border-b border-sidebar-border px-4", collapsed && "justify-center px-0")}>
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-sidebar-primary text-sidebar-primary-foreground">
-        <Plane className="h-4 w-4" aria-hidden />
-      </span>
+      <img src="/logo.svg" alt="" className="h-8 w-8 shrink-0 rounded-md ring-1 ring-sidebar-border" />
       {!collapsed && (
         <div className="leading-tight">
           <p className="text-sm font-semibold">Airfare Index India</p>

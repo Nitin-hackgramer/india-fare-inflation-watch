@@ -4,6 +4,7 @@ import type { DateRange, FareFilter, IndexPeriod, ReportingRange } from "@/types
 import { airfareService } from "@/services/api/airfareService";
 import { indexService } from "@/services/api/indexService";
 import { sourceService } from "@/services/api/sourceService";
+import { shockService } from "@/services/api/shockService";
 import { usePreferences } from "./usePreferences";
 
 const STALE = 60_000;
@@ -45,6 +46,20 @@ export const useAirlineSegments = (period: IndexPeriod, range: DateRange) =>
     queryKey: ["airline-segments", period, range],
     queryFn: () => indexService.getAirlineSegments({ period, range }),
     staleTime: STALE,
+  });
+
+export const useShocks = (range: DateRange) =>
+  useQuery({ queryKey: ["shocks", range], queryFn: () => shockService.getShocks(range), staleTime: STALE });
+
+export const useRouteRelatives = (period: IndexPeriod, range: DateRange) =>
+  useQuery({ queryKey: ["route-relatives", period, range], queryFn: () => indexService.getRouteRelatives({ period, range }), staleTime: STALE });
+
+export const useIndexExplanation = (target: { period: IndexPeriod; periodStart: string } | null) =>
+  useQuery({
+    queryKey: ["index-explain", target],
+    queryFn: () => indexService.explainChange(target!),
+    staleTime: STALE,
+    enabled: target !== null,
   });
 
 export const useSourcesStatus = () =>

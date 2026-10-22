@@ -262,23 +262,30 @@ Make sensible design decisions independently. Do not stop to ask for minor prefe
 
 **Final acceptance criteria:** The application must run without backend credentials, have a cohesive institutional design, use consistent demo data across all pages, implement the two core features interactively, and be structured for future Supabase + FastAPI integration.
 
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ef9fe458-ee64-4dc0-9c0f-db7ac3cd0906).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Setup and backend integration
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+npm install
+npm run dev        # http://localhost:8080 — runs on DEMO DATA, no backend or credentials needed
+npm test           # index / filter / CSV unit tests
+npm run build
 ```
+
+**Where things live**
+
+| Concern | File |
+| --- | --- |
+| Index math (Jevons within route, traffic-weighted across routes, daily/weekly/monthly) | `src/utils/indexCalculation.ts` |
+| Cleaning (failed, duplicates, MAD outliers) | `src/utils/fareNormalization.ts` |
+| Route filters, low/avg/high, airline × window matrix | `src/utils/fareFilters.ts` |
+| Shock Radar detection (rolling median / MAD) | `src/utils/shockDetection.ts` |
+| Explain-this-change attribution, what-if simulator | `explainIndexChange`, `simulateIndex` in `src/utils/indexCalculation.ts` |
+| Seeded demo dataset (incl. `DEMO_SHOCK_EVENTS`) | `src/services/data/mockData.ts` |
+| API endpoints + mock/live switch | `src/config/appConfig.ts`, `src/services/api/*` |
+| Pages | `src/routes/*.tsx` (TanStack file routes) |
+
+**Switching to the FastAPI backend.** Copy `.env.example` to `.env.local`, set `VITE_API_BASE_URL` to the Render URL and `VITE_USE_MOCK_DATA=false`. Each service method already calls the matching endpoint (`/api/v1/dashboard/summary`, `/api/v1/index`, `/api/v1/index/history`, `/api/v1/index/contributions`, `/api/v1/index/airlines`, `/api/v1/fares`, `/api/v1/fares/comparisons`, `/api/v1/fares/recent`, `/api/v1/sources/status`, `/api/v1/health`, plus Shock Radar: `/api/v1/shocks`, `/api/v1/index/explain`, `/api/v1/index/route-relatives`) and expects JSON matching `src/types/index.ts`. Pages need no changes.
+
+**Supabase.** Run `supabase/schema.sql` in the Supabase SQL editor. The FastAPI service writes with the `service_role` key (Render env var, server-side only); the frontend never needs it.
+
+Requires Node.js 20+. Logo plane glyph from [Lucide](https://lucide.dev) (ISC licence).

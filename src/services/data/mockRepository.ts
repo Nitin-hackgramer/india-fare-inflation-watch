@@ -2,7 +2,8 @@
  * Memoised derivations of the demo dataset. Used only by services in mock mode;
  * a real backend replaces this with database queries.
  */
-import type { DateRange, ReportingRange } from "@/types";
+import type { DateRange, ReportingRange, ShockScan } from "@/types";
+import { detectShocks } from "@/utils/shockDetection";
 import { normalizeObservations, type NormalizationResult } from "@/utils/fareNormalization";
 import { computeDailyIndex, type DailyIndexPoint } from "@/utils/indexCalculation";
 import { addDays } from "@/utils/date";
@@ -28,6 +29,9 @@ export function getDailyIndex(airlineCode?: string): DailyIndexPoint[] {
   }
   return dailyCache.get(key)!;
 }
+
+let shockScan: ShockScan | null = null;
+export const getShockScan = () => (shockScan ??= detectShocks(getNormalized().clean));
 
 const RANGE_DAYS: Record<ReportingRange, number> = { "30d": 30, "90d": 90, "180d": 180 };
 

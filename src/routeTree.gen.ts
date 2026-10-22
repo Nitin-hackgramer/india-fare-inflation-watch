@@ -15,6 +15,7 @@ import { Route as DataSourcesRouteImport } from './routes/data-sources'
 import { Route as MethodologyRouteImport } from './routes/methodology'
 import { Route as RouteExplorerRouteImport } from './routes/route-explorer'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShockRadarRouteImport } from './routes/shock-radar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShockRadarRoute = ShockRadarRouteImport.update({
+  id: '/shock-radar',
+  path: '/shock-radar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/methodology': typeof MethodologyRoute
   '/route-explorer': typeof RouteExplorerRoute
   '/settings': typeof SettingsRoute
+  '/shock-radar': typeof ShockRadarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/methodology': typeof MethodologyRoute
   '/route-explorer': typeof RouteExplorerRoute
   '/settings': typeof SettingsRoute
+  '/shock-radar': typeof ShockRadarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/methodology': typeof MethodologyRoute
   '/route-explorer': typeof RouteExplorerRoute
   '/settings': typeof SettingsRoute
+  '/shock-radar': typeof ShockRadarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/methodology'
     | '/route-explorer'
     | '/settings'
+    | '/shock-radar'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/methodology'
     | '/route-explorer'
     | '/settings'
+    | '/shock-radar'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/methodology'
     | '/route-explorer'
     | '/settings'
+    | '/shock-radar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   MethodologyRoute: typeof MethodologyRoute
   RouteExplorerRoute: typeof RouteExplorerRoute
   SettingsRoute: typeof SettingsRoute
+  ShockRadarRoute: typeof ShockRadarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shock-radar': {
+      id: '/shock-radar'
+      path: '/shock-radar'
+      fullPath: '/shock-radar'
+      preLoaderRoute: typeof ShockRadarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   MethodologyRoute: MethodologyRoute,
   RouteExplorerRoute: RouteExplorerRoute,
   SettingsRoute: SettingsRoute,
+  ShockRadarRoute: ShockRadarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -75,7 +75,25 @@ export const SOURCE_DEFINITIONS: SourceDefinition[] = [
   { id: "src-ota-b", name: "OTA source B (placeholder)", type: "ota", configured: false, failureRate: 0 },
 ];
 
-const ERROR_CODES = ["TIMEOUT", "HTTP_503", "PARSE_ERROR", "NO_FARES_LISTED"];
+/**
+ * Deterministic DEMO fare shocks so the Shock Radar has examples in every presentation.
+ * `day` is the index into the 180-day window; `factor` multiplies the simulated fare.
+ * These are invented scenarios, not real-world events.
+ */
+export const DEMO_SHOCK_EVENTS: { routeId: string; airlineCode?: string; day: number; days: number; factor: number }[] = [
+  { routeId: "DEL-BOM", day: 173, days: 2, factor: 1.24 }, // route-wide surge, visibly moves the index
+  { routeId: "MAA-DEL", airlineCode: "QP", day: 177, days: 1, factor: 1.3 },
+  { routeId: "BLR-HYD", airlineCode: "SG", day: 166, days: 1, factor: 0.7 }, // flash-sale style drop
+  { routeId: "DEL-CCU", airlineCode: "IX", day: 151, days: 1, factor: 0.74 },
+  { routeId: "BOM-BLR", airlineCode: "6E", day: 118, days: 1, factor: 1.32 },
+];
+
+function shockFactor(routeId: string, airlineCode: string, day: number): number {
+  const e = DEMO_SHOCK_EVENTS.find((s) => s.routeId === routeId && (!s.airlineCode || s.airlineCode === airlineCode) && day >= s.day && day < s.day + s.days);
+  return e?.factor ?? 1;
+}
+
+const ERROR_CODES =["TIMEOUT", "HTTP_503", "PARSE_ERROR", "NO_FARES_LISTED"];
 
 function mulberry32(seed: number) {
   let a = seed;
@@ -118,7 +136,7 @@ export function generateRawObservations(): FareObservation[] {
           ).toISOString();
           const failed = rand() < source.failureRate;
           const noise = 1 + (rand() - 0.5) * 0.12;
-          let fare = ROUTE_BASE_FARE[route.id] * AIRLINE_FACTOR[airline.code] * WINDOW_FACTOR[w] * season * noise;
+          let fare = ROUTE_BASE_FARE[route.id] * AIRLINE_FACTOR[airline.code] * WINDOW_FACTOR[w] * season * noise * shockFactor(route.id, airline.code, d);
           if (rand() < 0.002) fare *= 3.2; // injected outlier
           const obs: FareObservation = {
             id: `obs-${++seq}`,

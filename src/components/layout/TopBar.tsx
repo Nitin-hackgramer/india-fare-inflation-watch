@@ -27,7 +27,7 @@ export function TopBar({ onOpenMenu, menuButton }: { onOpenMenu: () => void; men
       <Button variant="ghost" size="icon" className="md:hidden" onClick={onOpenMenu} aria-label="Open navigation">
         {menuButton}
       </Button>
-      <h1 className="truncate text-base font-semibold text-foreground md:text-lg">{title}</h1>
+      <h1 className="truncate text-base font-semibold text-heading md:text-lg">{title}</h1>
       <div className="ml-auto flex items-center gap-2 md:gap-4">
         <span className="hidden items-center gap-1.5 text-xs text-muted-foreground lg:flex">
           <Clock className="h-3.5 w-3.5" aria-hidden />

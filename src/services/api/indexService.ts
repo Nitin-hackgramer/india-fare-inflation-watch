@@ -1,8 +1,9 @@
 import { appConfig } from "@/config/appConfig";
-import type { AirlineSegmentSeries, DateRange, IndexObservation, IndexPeriod, IndexSnapshot, RouteContribution } from "@/types";
+import type { AirlineSegmentSeries, DateRange, IndexExplanation, IndexObservation, IndexPeriod, IndexSnapshot, PeriodRelatives, RouteContribution } from "@/types";
 import { AIRLINES, BASE_PERIOD, ROUTES } from "@/services/data/mockData";
-import { getDailyIndex } from "@/services/data/mockRepository";
-import { aggregateIndex, METHOD_VERSION, routeContributions } from "@/utils/indexCalculation";
+import { getDailyIndex, getNormalized } from "@/services/data/mockRepository";
+import { aggregateIndex, aggregateRouteRelatives, explainIndexChange, METHOD_VERSION, periodKey, routeContributions } from "@/utils/indexCalculation";
+import { compareFares } from "@/utils/fareFilters";
 import { inRange, monthStart, weekStart } from "@/utils/date";
 import { apiGet, mockResponse } from "./client";
 
@@ -40,6 +41,42 @@ export const indexService = {
   getRouteContributions(range: DateRange): Promise<RouteContribution[]> {
     if (!appConfig.useMockData) return apiGet(appConfig.endpoints.indexContributions, { ...range });
     return mockResponse(() => routeContributions(getDailyIndex(), ROUTES, range));
+  },
+
+  /** GET /api/v1/index/route-relatives?period=&from=&to= — per-period route relatives (what-if simulator input). */
+  getRouteRelatives(params: { period: IndexPeriod; range: DateRange }): Promise<PeriodRelatives[]> {
+    if (!appConfig.useMockData) return apiGet(appConfig.endpoints.indexRouteRelatives, { period: params.period, ...params.range });
+    return mockResponse(() =>
+      aggregateRouteRelatives(getDailyIndex(), params.period, ROUTES).filter((p) => inRange(p.periodStart, startKey(params.range.from, params.period), params.range.to)),
+    );
+  },
+
+  /** GET /api/v1/index/explain?period=&period_start= — null when there is no earlier period to compare. */
+  explainChange(params: { period: IndexPeriod; periodStart: string }): Promise<IndexExplanation | null> {
+    if (!appConfig.useMockData) return apiGet(appConfig.endpoints.indexExplain, { period: params.period, period_start: params.periodStart });
+    return mockResponse(() => {
+      const series = aggregateRouteRelatives(getDailyIndex(), params.period, ROUTES);
+      const i = series.findIndex((p) => p.periodStart === params.periodStart);
+      if (i < 1) return null;
+      const previous = series[i - 1];
+      const current = series[i];
+      const { contributions, residualPts } = explainIndexChange(previous, current, ROUTES);
+      const clean = getNormalized().clean;
+      const inPeriod = (start: string) => clean.filter((o) => periodKey(o.observedDate, params.period) === start);
+      const cur = inPeriod(current.periodStart);
+      return {
+        period: params.period,
+        previous,
+        current,
+        changePts: current.value - previous.value,
+        changePct: ((current.value - previous.value) / previous.value) * 100,
+        contributions,
+        residualPts,
+        movers: compareFares(inPeriod(previous.periodStart), cur),
+        latestCollectionAt: cur.reduce((m, o) => (o.collectedAt > m ? o.collectedAt : m), ""),
+        methodVersion: METHOD_VERSION,
+      };
+    });
   },
 
   /** GET /api/v1/index/airlines?period=&from=&to= */

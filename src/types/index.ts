@@ -119,6 +119,65 @@ export interface FareFilter {
   to?: string;
 }
 
+export type ShockSeverity = "moderate" | "high" | "severe";
+
+/** A statistically unusual fare move for one route × airline on one collection date. Not a confirmed cause. */
+export interface FareShock {
+  id: string;
+  routeId: string;
+  airlineCode: string;
+  observedDate: string;
+  collectedAt: string; // latest capture among flagged quotes
+  direction: "increase" | "decrease";
+  changePct: number; // median of flagged quotes vs their rolling median
+  robustZ: number; // median robust z-score (signed)
+  severity: ShockSeverity;
+  windows: AdvanceWindow[]; // advance windows that were flagged
+  cellsObserved: number; // windows with enough history that day
+  baselineAvgFare: number;
+  currentAvgFare: number;
+  sampleSize: number; // fares used: flagged quotes + their baseline history
+}
+
+export interface ShockScan {
+  shocks: FareShock[];
+  checked: number; // quotes with enough history to test
+  skippedInsufficientHistory: number;
+}
+
+/** One index period with the route relatives it was built from. */
+export interface PeriodRelatives {
+  periodStart: string;
+  periodLabel: string;
+  value: number;
+  routeRelatives: Record<string, number>;
+  observationCount: number;
+}
+
+/** Same quote (route × airline × window) compared across two periods. */
+export interface FareMover {
+  routeId: string;
+  airlineCode: string;
+  advanceDays: AdvanceWindow;
+  prevAvg: number | null;
+  curAvg: number | null;
+  changePct: number | null;
+  n: number;
+}
+
+export interface IndexExplanation {
+  period: IndexPeriod;
+  previous: PeriodRelatives;
+  current: PeriodRelatives;
+  changePts: number;
+  changePct: number;
+  contributions: RouteContribution[]; // ranked by |contributionPts|
+  residualPts: number; // change not attributable to routes present in both periods
+  movers: FareMover[];
+  latestCollectionAt: string;
+  methodVersion: string;
+}
+
 export interface CategoryValue {
   key: string;
   label: string;
